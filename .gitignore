@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+
+# Environment Variables
+.env
+
+# Logs
+logs/
+*.log
+
+# SQLite
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
