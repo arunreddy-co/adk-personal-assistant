@@ -42,6 +42,10 @@ def classify_memory(text: str) -> str:
     - project
     - ignore
     """
+    text = text.strip()
+
+    if text.endswith("?"):
+        return "ignore"
 
     text = text.lower()
 
