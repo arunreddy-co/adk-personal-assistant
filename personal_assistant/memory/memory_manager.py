@@ -64,3 +64,16 @@ def list_project_facts():
     return list_memories(
         "project_memory"
     )
+
+def get_all_user_memories():
+
+    return list_memories(
+        USER_PROFILE
+    )
+
+
+def get_all_project_memories():
+
+    return list_memories(
+        PROJECT_MEMORY
+    )
