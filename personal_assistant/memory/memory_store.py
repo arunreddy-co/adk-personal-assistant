@@ -5,7 +5,10 @@ DB_PATH = Path(__file__).parent / "assistant.db"
 
 
 def initialize_db():
+
     conn = sqlite3.connect(DB_PATH)
+
+    # Memories Table
 
     conn.execute("""
     CREATE TABLE IF NOT EXISTS memories (
@@ -25,7 +28,20 @@ def initialize_db():
     )
     """)
 
+    # Reflections Table
+
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS reflections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        reflection TEXT UNIQUE NOT NULL,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     conn.commit()
+
     conn.close()
 
     print("Database initialized.")
@@ -104,3 +120,4 @@ def delete_memory(memory_type: str, key: str):
 
     conn.commit()
     conn.close()
+
