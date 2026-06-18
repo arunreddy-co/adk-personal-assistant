@@ -5,12 +5,17 @@ def classifier_to_memory(
     if not result:
         return None
 
-    if not result.get(
-        "remember"
-    ):
+    action = result.get(
+        "action"
+    )
+
+    if action == "IGNORE":
         return None
 
     return {
+
+        "action":
+            action,
 
         "memory_type":
             result["memory_type"],

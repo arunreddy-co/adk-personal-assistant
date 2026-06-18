@@ -6,9 +6,8 @@ from personal_assistant.memory.memory_adapter import (
     classifier_to_memory
 )
 
-from personal_assistant.memory.memory_manager import (
-    save_user_fact,
-    save_project_fact
+from personal_assistant.memory.memory_action_executor import (
+    execute_memory_action
 )
 
 from personal_assistant.memory.memory_logger import (
@@ -57,66 +56,28 @@ def process_memory_candidate(
 
         return "Ignored"
 
-    if memory["memory_type"] == "user":
+    action_result = (
+        execute_memory_action(
+            memory
+        )
+    )
 
-        save_user_fact(
-            memory["key"],
-            memory["value"]
+    print(
+        action_result
+    )
+
+    if should_generate_reflection():
+
+        print(
+            "\n===== REFLECTION TRIGGERED ====="
         )
 
-        log_memory_event(
-            "SAVED",
-            f"user:{memory['key']}"
+        reflections = (
+            generate_reflections()
         )
 
-        if should_generate_reflection():
-
-            print(
-                "\n===== REFLECTION TRIGGERED ====="
-            )
-
-            reflections = (
-                generate_reflections()
-            )
-
-            print(
-                reflections
-            )
-
-        return (
-            f"Saved user memory: "
-            f"{memory['key']}"
+        print(
+            reflections
         )
 
-    if memory["memory_type"] == "project":
-
-        save_project_fact(
-            memory["key"],
-            memory["value"]
-        )
-
-        log_memory_event(
-            "SAVED",
-            f"project:{memory['key']}"
-        )
-
-        if should_generate_reflection():
-
-            print(
-                "\n===== REFLECTION TRIGGERED ====="
-            )
-
-            reflections = (
-                generate_reflections()
-            )
-
-            print(
-                reflections
-            )
-
-        return (
-            f"Saved project memory: "
-            f"{memory['key']}"
-        )
-
-    return "Unsupported memory type"
+    return action_result

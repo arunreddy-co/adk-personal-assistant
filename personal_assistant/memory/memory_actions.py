@@ -1,0 +1,23 @@
+CREATE = "CREATE"
+
+UPDATE = "UPDATE"
+
+MERGE = "MERGE"
+
+DELETE = "DELETE"
+
+IGNORE = "IGNORE"
+
+
+VALID_ACTIONS = {
+
+    CREATE,
+
+    UPDATE,
+
+    MERGE,
+
+    DELETE,
+
+    IGNORE
+}
