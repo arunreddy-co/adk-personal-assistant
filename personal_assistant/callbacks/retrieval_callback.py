@@ -1,6 +1,6 @@
 from google.genai import types
 
-from personal_assistant.memory.memory_retriever import (
+from personal_assistant.memory.memory_retrieval_service import (
     retrieve_relevant_memory
 )
 

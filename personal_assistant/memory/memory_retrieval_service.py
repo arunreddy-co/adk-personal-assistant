@@ -6,6 +6,10 @@ from personal_assistant.memory.memory_domain_retriever import (
     retrieve_domain_memories
 )
 
+from personal_assistant.memory.memory_ranker import (
+    rank_memories
+)
+
 
 def retrieve_relevant_memory(
     user_message: str
@@ -19,7 +23,9 @@ def retrieve_relevant_memory(
         ↓
     Domain Retriever
         ↓
-    Memories
+    Memory Ranker
+        ↓
+    Relevant Memories
     """
 
     memory_types = (
@@ -28,10 +34,17 @@ def retrieve_relevant_memory(
         )
     )
 
-    memories = (
+    candidate_memories = (
         retrieve_domain_memories(
             memory_types
         )
     )
 
-    return memories
+    ranked_memories = (
+        rank_memories(
+            user_message,
+            candidate_memories
+        )
+    )
+
+    return ranked_memories
