@@ -99,6 +99,58 @@ Output:
   ]
 }}
 
+Question:
+What project work have I done recently?
+
+Output:
+{{
+  "memory_types": [
+    "PROJECT",
+    "EPISODE"
+  ]
+}}
+
+Question:
+What milestones have I completed?
+
+Output:
+{{
+  "memory_types": [
+    "EPISODE"
+  ]
+}}
+
+Question:
+What important decisions have I made?
+
+Output:
+{{
+  "memory_types": [
+    "EPISODE"
+  ]
+}}
+
+Question:
+What have I accomplished recently?
+
+Output:
+{{
+  "memory_types": [
+    "EPISODE"
+  ]
+}}
+
+Question:
+What progress have I made on my project?
+
+Output:
+{{
+  "memory_types": [
+    "PROJECT",
+    "EPISODE"
+  ]
+}}
+
 Return ONLY valid JSON.
 
 Schema:

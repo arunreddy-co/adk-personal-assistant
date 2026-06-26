@@ -8,7 +8,8 @@ from .memory_store import (
     set_memory,
     get_memory,
     list_memories,
-    delete_memory
+    delete_memory,
+    merge_memory
 )
 
 #User Methods
@@ -76,4 +77,35 @@ def get_all_project_memories():
 
     return list_memories(
         PROJECT_MEMORY
+    )
+
+def merge_user_fact(
+    key: str,
+    value: str
+):
+
+    key = normalize_key(
+        key
+    )
+
+    merge_memory(
+        USER_PROFILE,
+        key,
+        value
+    )
+
+
+def merge_project_fact(
+    key: str,
+    value: str
+):
+
+    key = normalize_key(
+        key
+    )
+
+    merge_memory(
+        PROJECT_MEMORY,
+        key,
+        value
     )

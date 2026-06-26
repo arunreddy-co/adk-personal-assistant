@@ -22,6 +22,14 @@ from personal_assistant.memory.memory_reflector import (
     generate_reflections
 )
 
+from personal_assistant.memory.memory_kind_classifier import (
+    classify_memory_kind
+)
+
+from personal_assistant.memory.episode_processor import (
+    process_episode_candidate
+)
+
 
 def process_memory_candidate(
     text: str
@@ -81,3 +89,79 @@ def process_memory_candidate(
         )
 
     return action_result
+
+def process_memory_message(
+    text: str
+):
+    """
+    Main memory entry point.
+
+    Routes messages to the
+    correct memory system.
+    """
+
+    kind_result = (
+        classify_memory_kind(
+            text
+        )
+    )
+
+    memory_kind = (
+        kind_result.get(
+            "memory_kind"
+        )
+    )
+
+    print(
+        f"\nMEMORY KIND: "
+        f"{memory_kind}"
+    )
+
+    if memory_kind == "IGNORE":
+
+        return (
+            "Memory ignored"
+        )
+
+    if memory_kind == "SEMANTIC":
+
+        return (
+            process_memory_candidate(
+                text
+            )
+        )
+
+    if memory_kind == "EPISODE":
+
+        return (
+            process_episode_candidate(
+                text
+            )
+        )
+
+    if memory_kind == "BOTH":
+
+        semantic_result = (
+            process_memory_candidate(
+                text
+            )
+        )
+
+        episode_result = (
+            process_episode_candidate(
+                text
+            )
+        )
+
+        return {
+
+            "semantic":
+                semantic_result,
+
+            "episode":
+                episode_result
+        }
+
+    return (
+        "Unknown memory type"
+    )

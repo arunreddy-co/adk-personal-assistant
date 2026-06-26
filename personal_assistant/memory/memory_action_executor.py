@@ -1,6 +1,8 @@
 from personal_assistant.memory.memory_manager import (
     save_user_fact,
-    save_project_fact
+    save_project_fact,
+    merge_user_fact,
+    merge_project_fact
 )
 
 from personal_assistant.memory.memory_store import (
@@ -54,8 +56,7 @@ def execute_memory_action(
 
     if action in (
         "CREATE",
-        "UPDATE",
-        "MERGE"
+        "UPDATE"
     ):
 
         if memory_type == "user":
@@ -91,6 +92,46 @@ def execute_memory_action(
                 f"{action} project memory: "
                 f"{key}"
             )
+
+    #MERGE
+
+    if action == "MERGE":
+
+        if memory_type == "user":
+
+            merge_user_fact(
+                key,
+                value
+            )
+
+            log_memory_event(
+                "MERGE",
+                f"user:{key}"
+            )
+
+            return (
+                f"MERGED user memory: "
+                f"{key}"
+            )
+
+        if memory_type == "project":
+
+            merge_project_fact(
+                key,
+                value
+            )
+
+            log_memory_event(
+                "MERGE",
+                f"project:{key}"
+            )
+
+            return (
+                f"MERGED project memory: "
+                f"{key}"
+            )
+
+    #DELETE
 
     if action == "DELETE":
 

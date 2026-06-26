@@ -7,6 +7,10 @@ from personal_assistant.memory.reflection_manager import (
     list_reflections
 )
 
+from personal_assistant.memory.episode_store import (
+    list_episodes
+)
+
 
 def retrieve_domain_memories(
     memory_types: list[str]
@@ -17,6 +21,10 @@ def retrieve_domain_memories(
     """
 
     memories = []
+
+    #
+    # PROFILE
+    #
 
     if "PROFILE" in memory_types:
 
@@ -30,6 +38,10 @@ def retrieve_domain_memories(
                 f"{key} = {value}"
             )
 
+    #
+    # PROJECT
+    #
+
     if "PROJECT" in memory_types:
 
         project_memories = (
@@ -42,6 +54,10 @@ def retrieve_domain_memories(
                 f"{key} = {value}"
             )
 
+    #
+    # REFLECTION
+    #
+
     if "REFLECTION" in memory_types:
 
         reflections = (
@@ -52,6 +68,32 @@ def retrieve_domain_memories(
 
             memories.append(
                 f"reflection = {reflection}"
+            )
+
+    #
+    # EPISODE
+    #
+
+    if "EPISODE" in memory_types:
+
+        episodes = (
+            list_episodes()
+        )
+
+        for (
+            _,
+            summary,
+            importance,
+            memory_type,
+            reason,
+            created_at
+        ) in episodes:
+
+            memories.append(
+                (
+                    f"episode = "
+                    f"{summary}"
+                )
             )
 
     return memories

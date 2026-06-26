@@ -8,7 +8,9 @@ def initialize_db():
 
     conn = sqlite3.connect(DB_PATH)
 
+    #
     # Memories Table
+    #
 
     conn.execute("""
     CREATE TABLE IF NOT EXISTS memories (
@@ -28,7 +30,9 @@ def initialize_db():
     )
     """)
 
+    #
     # Reflections Table
+    #
 
     conn.execute("""
     CREATE TABLE IF NOT EXISTS reflections (
@@ -40,13 +44,37 @@ def initialize_db():
     )
     """)
 
-    conn.commit()
+    #
+    # Episodes Table
+    #
 
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS episodes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        summary TEXT NOT NULL,
+
+        importance TEXT NOT NULL,
+
+        memory_type TEXT NOT NULL,
+
+        reason TEXT NOT NULL,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    conn.commit()
     conn.close()
 
     print("Database initialized.")
 
-def set_memory(memory_type: str, key: str, value: str):
+
+def set_memory(
+    memory_type: str,
+    key: str,
+    value: str
+):
     conn = sqlite3.connect(DB_PATH)
 
     conn.execute("""
@@ -61,13 +89,20 @@ def set_memory(memory_type: str, key: str, value: str):
     DO UPDATE SET
         value = excluded.value,
         updated_at = CURRENT_TIMESTAMP
-    """,
-    (memory_type, key, value))
+    """, (
+        memory_type,
+        key,
+        value
+    ))
 
     conn.commit()
     conn.close()
 
-def get_memory(memory_type: str, key: str):
+
+def get_memory(
+    memory_type: str,
+    key: str
+):
     conn = sqlite3.connect(DB_PATH)
 
     cursor = conn.execute("""
@@ -75,7 +110,10 @@ def get_memory(memory_type: str, key: str):
     FROM memories
     WHERE memory_type = ?
       AND key = ?
-    """, (memory_type, key))
+    """, (
+        memory_type,
+        key
+    ))
 
     row = cursor.fetchone()
 
@@ -86,19 +124,33 @@ def get_memory(memory_type: str, key: str):
 
     return None
 
-def list_memories(memory_type: str | None = None):
+
+def list_memories(
+    memory_type: str | None = None
+):
     conn = sqlite3.connect(DB_PATH)
 
     if memory_type:
+
         cursor = conn.execute("""
-        SELECT memory_type, key, value
+        SELECT
+            memory_type,
+            key,
+            value
         FROM memories
         WHERE memory_type = ?
         ORDER BY key
-        """, (memory_type,))
+        """, (
+            memory_type,
+        ))
+
     else:
+
         cursor = conn.execute("""
-        SELECT memory_type, key, value
+        SELECT
+            memory_type,
+            key,
+            value
         FROM memories
         ORDER BY memory_type, key
         """)
@@ -109,15 +161,171 @@ def list_memories(memory_type: str | None = None):
 
     return rows
 
-def delete_memory(memory_type: str, key: str):
+
+def delete_memory(
+    memory_type: str,
+    key: str
+):
     conn = sqlite3.connect(DB_PATH)
 
     conn.execute("""
     DELETE FROM memories
     WHERE memory_type = ?
       AND key = ?
-    """, (memory_type, key))
+    """, (
+        memory_type,
+        key
+    ))
 
     conn.commit()
     conn.close()
 
+
+def merge_memory(
+    memory_type: str,
+    key: str,
+    value: str
+):
+    """
+    Merge new value into an existing memory.
+
+    Example:
+
+    Existing:
+        Python
+
+    New:
+        JavaScript
+
+    Result:
+        Python, JavaScript
+    """
+
+    existing = get_memory(
+        memory_type,
+        key
+    )
+
+    #
+    # No existing memory
+    #
+
+    if not existing:
+
+        set_memory(
+            memory_type,
+            key,
+            value
+        )
+
+        return
+
+    #
+    # Preserve insertion order
+    #
+
+    existing_parts = [
+
+        item.strip()
+
+        for item in existing.split(",")
+
+        if item.strip()
+    ]
+
+    for item in value.split(","):
+
+        item = item.strip()
+
+        if (
+            item
+            and
+            item not in existing_parts
+        ):
+            existing_parts.append(
+                item
+            )
+
+    merged_value = ", ".join(
+        existing_parts
+    )
+
+    set_memory(
+        memory_type,
+        key,
+        merged_value
+    )
+
+
+#
+# Episode Functions
+#
+
+def save_episode(
+    summary: str,
+    importance: str,
+    memory_type: str,
+    reason: str
+):
+    conn = sqlite3.connect(DB_PATH)
+
+    conn.execute("""
+    INSERT INTO episodes (
+        summary,
+        importance,
+        memory_type,
+        reason
+    )
+    VALUES (?, ?, ?, ?)
+    """, (
+        summary,
+        importance,
+        memory_type,
+        reason
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+def list_episodes():
+
+    conn = sqlite3.connect(DB_PATH)
+
+    cursor = conn.execute("""
+    SELECT
+        id,
+        summary,
+        importance,
+        memory_type,
+        reason,
+        created_at
+    FROM episodes
+    ORDER BY created_at DESC
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def delete_episode(
+    episode_id: int
+):
+    conn = sqlite3.connect(DB_PATH)
+
+    conn.execute("""
+    DELETE FROM episodes
+    WHERE id = ?
+    """, (
+        episode_id,
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+if __name__ == "__main__":
+    initialize_db()
